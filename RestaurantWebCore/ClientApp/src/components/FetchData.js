@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { actionCreators } from '../store/WeatherForecasts';
 import { styled } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import './FetchData.css';
 
 const MyButton = styled(Button)({
@@ -30,7 +32,8 @@ class FetchData extends Component {
         <h1>Weather forecast</h1>
         <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
         {renderForecastsTable(this.props)}
-        {renderPagination(this.props)}
+            {renderPagination(this.props)}
+            {renderAddButton(this.props)}
       </div>
     );
   }
@@ -67,14 +70,34 @@ function renderPagination(props) {
     const nextStartDateIndex = (props.startDateIndex || 0) + 5;
 
     return <div class="flex-container">
-            <Button variant="contained" size="large" component={Link} to={`/fetchdata/${prevStartDateIndex}`}>
-                Previous
+            <Button variant="outlined" color="primary" size="large" component={Link} to={`/fetchdata/${prevStartDateIndex}`}>
+                    Previous
             </Button>
             {props.isLoading ? <span>Loading...</span> : []}
-            <Button variant="contained" size="large" component={Link} to={`/fetchdata/${nextStartDateIndex}`}>
-                Next
-            </Button>
-    </div>;
+            <Button variant="outlined" color="primary" size="large" component={Link} to={`/fetchdata/${nextStartDateIndex}`}>
+                    Next
+             </Button>
+        </div>;
+}
+
+function renderTables(props) {
+    return (
+        <div class="flex-container" >
+            {props.tables.map(table =>
+                <Button variant="contained" color="primary" size="large" >
+                    Table {table.TableNo}
+                </Button>
+            )}
+        </div >
+    );
+}
+
+function renderAddButton(props) {
+    return (
+        <Fab size="small" color="secondary" aria-label="Add" component={Link} to={`/fetchdata/$`}>
+            <AddIcon />
+        </Fab>
+    );
 }
 
 export default connect(

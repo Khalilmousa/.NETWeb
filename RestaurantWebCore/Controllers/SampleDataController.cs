@@ -26,6 +26,24 @@ namespace RestaurantWebCore.Controllers
             });
         }
 
+        [HttpGet("[action]")]
+        public IEnumerable<TableDetails> Tables()
+        {
+            var rng = new Random();
+            return Enumerable.Range(1, 10).Select(index => new TableDetails
+            {
+                TableNo = index,
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            });
+        }
+
+        public class TableDetails
+        {
+            public int TableNo { get; set; }
+            public string Summary { get; set; }
+
+        }
+
         public class WeatherForecast
         {
             public string DateFormatted { get; set; }
