@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -23,46 +23,51 @@ class FetchData extends Component {
   componentWillReceiveProps(nextProps) {
     // This method runs when incoming props (e.g., route params) change
     const startDateIndex = parseInt(nextProps.match.params.startDateIndex, 10) || 0;
-    this.props.requestWeatherForecasts(startDateIndex);
+    //this.props.requestWeatherForecasts(startDateIndex);
   }
 
     render() {
+        console.log("this.props",this.props)
     return (
       <div>
         <h1>Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
-        {renderForecastsTable(this.props)}
+            <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
+            <ForecastsTable forecasts={this.props.forecasts} />
             {renderPagination(this.props)}
             {renderAddButton(this.props)}
+            {renderTables(this.props)}
       </div>
     );
   }
 }
 
 
-function renderForecastsTable(props) {
-  return (
-    <table className='table'>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Temp. (C)</th>
-          <th>Temp. (F)</th>
-          <th>Summary</th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.forecasts.map(forecast =>
-          <tr key={forecast.dateFormatted}>
-            <td>{forecast.dateFormatted}</td>
-            <td>{forecast.temperatureC}</td>
-            <td>{forecast.temperatureF}</td>
-            <td>{forecast.summary}</td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  );
+class ForecastsTable extends PureComponent {
+    render() {
+        return (
+            <table className='table'>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Temp. (C)</th>
+                        <th>Temp. (F)</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.props.forecasts.map(forecast =>
+                        <tr key={forecast.dateFormatted}>
+                            <td>{forecast.dateFormatted}</td>
+                            <td>{forecast.temperatureC}</td>
+                            <td>{forecast.temperatureF}</td>
+                            <td>{forecast.summary}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        );
+    }
+ 
 }
 
 function renderPagination(props) {
@@ -70,11 +75,11 @@ function renderPagination(props) {
     const nextStartDateIndex = (props.startDateIndex || 0) + 5;
 
     return <div class="flex-container">
-            <Button variant="outlined" color="primary" size="large" component={Link} to={`/fetchdata/${prevStartDateIndex}`}>
+        <Button variant="outlined" color="primary" size="large" onClick={() => props.requestWeatherForecasts({ prevStartDateIndex })}>
                     Previous
             </Button>
             {props.isLoading ? <span>Loading...</span> : []}
-            <Button variant="outlined" color="primary" size="large" component={Link} to={`/fetchdata/${nextStartDateIndex}`}>
+        <Button variant="outlined" color="primary" size="large" onClick={() => props.requestWeatherForecasts({ nextStartDateIndex })}>
                     Next
              </Button>
         </div>;
@@ -82,10 +87,10 @@ function renderPagination(props) {
 
 function renderTables(props) {
     return (
-        <div class="flex-container" >
-            {props.tables.map(table =>
+        <div class="flex-container button-list" >
+            {props.tables.map(table => 
                 <Button variant="contained" color="primary" size="large" >
-                    Table {table.TableNo}
+                    Table {table.tableNo}
                 </Button>
             )}
         </div >
@@ -94,7 +99,7 @@ function renderTables(props) {
 
 function renderAddButton(props) {
     return (
-        <Fab size="small" color="secondary" aria-label="Add" component={Link} to={`/fetchdata/$`}>
+        <Fab size="small" color="secondary" aria-label="Add" onClick={props.requestTables}>
             <AddIcon />
         </Fab>
     );

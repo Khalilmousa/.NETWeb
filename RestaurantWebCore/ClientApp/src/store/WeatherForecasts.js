@@ -1,6 +1,8 @@
 ﻿const requestWeatherForecastsType = 'REQUEST_WEATHER_FORECASTS';
 const receiveWeatherForecastsType = 'RECEIVE_WEATHER_FORECASTS';
-const initialState = { forecasts: [], isLoading: false };
+const requestTablesType = 'REQUEST_TABLE';
+const receiveTablesType = 'RECEIVE_TABLE';
+const initialState = { tables: [], forecasts: [], isLoading: false };
 
 export const actionCreators = {
   requestWeatherForecasts: startDateIndex => async (dispatch, getState) => {    
@@ -11,16 +13,27 @@ export const actionCreators = {
 
     dispatch({ type: requestWeatherForecastsType, startDateIndex });
 
-      const url = `api/SampleData/Forecasts?startDateIndex=${startDateIndex}`;
+    const url = `api/SampleData/Forecasts?startDateIndex=${startDateIndex}`;
     const response = await fetch(url);
     const forecasts = await response.json();
 
     dispatch({ type: receiveWeatherForecastsType, startDateIndex, forecasts });
+  },
+
+  requestTables: () => async (dispatch, getState) => {
+      dispatch({ type: requestTablesType });
+
+      const url = `api/SampleData/Tables`;
+      const response = await fetch(url);
+      const tables = await response.json();
+
+      dispatch({ type: receiveTablesType, tables });
   }
+
 };
 
-export const reducer = (state, action) => {
-  state = state || initialState;
+export const reducer = (state = initialState, action) => {
+ 
 
   if (action.type === requestWeatherForecastsType) {
     return {
@@ -33,11 +46,29 @@ export const reducer = (state, action) => {
   if (action.type === receiveWeatherForecastsType) {
     return {
       ...state,
-      startDateIndex: action.startDateIndex,
-      forecasts: action.forecasts,
+        startDateIndex: action.startDateIndex,
+        forecasts: action.forecasts,
       isLoading: false
     };
   }
+
+  if (action.type === requestTablesType) {
+    return {
+      ...state,
+      startDateIndex: action.startDateIndex,
+      isLoading: true
+    };
+  }
+
+  if (action.type === receiveTablesType) {
+    return {
+      ...state,
+      startDateIndex: action.startDateIndex,
+        tables: [...state.tables, ...action.tables],
+      isLoading: false
+    };
+  }
+
 
   return state;
 };

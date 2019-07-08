@@ -2,3 +2,9 @@
     display: flex;
     justify-content: space-between;
 }
+.button-list {
+    max-width: 100% !important;
+}
+.MuiFab-secondary {
+    margin: 10px !important;
+}
